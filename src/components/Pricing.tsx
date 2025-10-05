@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Check, Sparkles } from "lucide-react";
+import { Check, Sparkles, Badge } from "lucide-react";
+import PriceComparison from "./PriceComparison";
+import { trackEvent } from "@/lib/tracking";
 
 const plans = [
   {
@@ -28,11 +30,19 @@ const plans = [
 ];
 
 const Pricing = () => {
+  const handlePriceClick = (planName: string) => {
+    trackEvent("view_pricing", { plan: planName });
+  };
+
   return (
-    <section className="py-24 relative overflow-hidden bg-gradient-to-b from-secondary/20 to-background">
+    <section id="pricing" className="py-24 relative overflow-hidden bg-gradient-to-b from-secondary/20 to-background">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="max-w-3xl mx-auto text-center mb-16 space-y-4">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 border border-accent/20 mb-4">
+            <Badge className="w-4 h-4 text-accent" />
+            <span className="text-sm font-medium text-accent">Специальная цена</span>
+          </div>
           <h2 className="font-display text-4xl md:text-5xl font-bold">
             Инвестиция в себя
           </h2>
@@ -53,8 +63,9 @@ const Pricing = () => {
               }`}
             >
               {plan.popular && (
-                <div className="absolute top-0 right-0 bg-gradient-accent text-accent-foreground px-4 py-1 text-sm font-semibold rounded-bl-lg">
-                  Популярно
+                <div className="absolute top-0 right-0 bg-gradient-accent text-accent-foreground px-4 py-1 text-sm font-semibold rounded-bl-lg flex items-center gap-1">
+                  <Sparkles className="w-3 h-3" />
+                  Скидка 41%
                 </div>
               )}
               
@@ -65,6 +76,11 @@ const Pricing = () => {
                 </div>
                 
                 <div className="space-y-1">
+                  {plan.popular && (
+                    <div className="text-sm text-muted-foreground line-through">
+                      15 000 ₽
+                    </div>
+                  )}
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-bold">{plan.priceRub}</span>
                     <span className="text-muted-foreground">₽</span>
@@ -87,6 +103,7 @@ const Pricing = () => {
                   variant={plan.popular ? "accent" : "default"} 
                   size="lg" 
                   className="w-full"
+                  onClick={() => handlePriceClick(plan.name)}
                 >
                   Выбрать план
                 </Button>
@@ -123,6 +140,9 @@ const Pricing = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Price Comparison */}
+        <PriceComparison />
       </div>
 
       {/* Background decoration */}
